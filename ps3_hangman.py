@@ -12,7 +12,7 @@
 import random
 import string
 
-WORDLIST_FILENAME = "words.txt"
+WORDLIST_FILENAME = "/Users/Homem/Python/words.txt"
 
 def loadWords():
     """
@@ -113,23 +113,51 @@ def hangman(secretWord):
 
     Follows the other limitations detailed in the problem write-up.
     '''
+    sWord=secretWord.lower()
     print "Welcome to the game, Hangman!"
-    print "I am thinking of a word that is "+str(len(secretWord))+" letters long."
+    print "I am thinking of a word that is "+str(len(sWord))+" letters long."
     lettersGuessed=[]
     mistakesMade=0
     availableLetters=getAvailableLetters(lettersGuessed)    
     print '-'*13
-#    print getGuessedWord(secretWord, lettersGuessed) 
     print "You have "+str(8-mistakesMade)+" guesses left."
     print "Available letters: "+availableLetters
-    myGuess=raw_input("Please guess a letter: ")
-    if myGuess in secretWord:
-       lettersGuessed.append(myGuess)
-       print "Good guess: "+ getGuessedWord(secretWord, lettersGuessed)
-    else:
-       mistakesMade += 1
-       print "Oops! That letter is not in my word: "+ getGuessedWord(secretWord, lettersGuessed)
+    guessedSoFar=''
 
+    while mistakesMade < 8:
+       myGuess1=raw_input("Please guess a letter: ")
+       myGuess=myGuess1.lower()
+       
+       if myGuess in secretWord:
+          if myGuess in lettersGuessed:
+              print  "Oops! You've already guessed that letter: "+ guessedSoFar
+          else:
+              lettersGuessed.append(myGuess)
+              guessedSoFar=getGuessedWord(sWord, lettersGuessed)
+              print "Good guess: "+ guessedSoFar
+       else:
+          if myGuess in lettersGuessed:
+              print "Oops! You've already guessed that letter: "+ guessedSoFar
+          else:
+              mistakesMade += 1
+              lettersGuessed.append(myGuess)
+              guessedSoFar=getGuessedWord(sWord, lettersGuessed)
+              print "Oops! That letter is not in my word: "+ guessedSoFar
+
+       if guessedSoFar.count('_') == 0:
+          break
+           
+       print '-'*13
+       if mistakesMade < 8:
+          print "You have "+str(8-mistakesMade)+" guesses left."
+          availableLetters=getAvailableLetters(lettersGuessed)    
+          print "Available letters: "+str(availableLetters)
+       
+    if guessedSoFar.count('_') == 0:
+        print "Congratulations, you won!"
+        return "Congratulations, you won!"
+    else:
+        print "Sorry, you ran out of guesses. The word was "+sWord+"."
     return
 
 
@@ -140,5 +168,5 @@ def hangman(secretWord):
 # secretWord while you're testing)
 
 # secretWord = chooseWord(wordlist).lower()
-secretWord='apple'
+secretWord='seA'
 hangman(secretWord)
